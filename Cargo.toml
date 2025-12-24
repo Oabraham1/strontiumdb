@@ -14,12 +14,19 @@ thiserror = "2"
 libc = "0.2"
 nix = { version = "0.29", features = ["ioctl", "time", "fs"] }
 tokio = { version = "1", features = ["time", "sync", "rt", "process"] }
+rocksdb = "0.22"
 
 [dev-dependencies]
 criterion = { version = "0.5", features = ["html_reports"] }
 proptest = "1"
 tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+tempfile = "3"
+rand = "0.8"
 
 [[bench]]
 name = "time_service"
+harness = false
+
+[[bench]]
+name = "storage"
 harness = false
