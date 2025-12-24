@@ -182,10 +182,7 @@ mod tests {
         let encoded_new = encode_mvcc_key(&key, &ts_new);
 
         // Newer version should sort BEFORE older version (smaller in byte order)
-        assert!(
-            encoded_new < encoded_old,
-            "newer version should sort first"
-        );
+        assert!(encoded_new < encoded_old, "newer version should sort first");
     }
 
     #[test]

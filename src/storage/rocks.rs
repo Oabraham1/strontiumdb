@@ -10,8 +10,8 @@ use rocksdb::{DBWithThreadMode, IteratorMode, MultiThreaded, Options, WriteBatch
 use crate::time::Timestamp;
 
 use super::{
-    decode_mvcc_key, encode_mvcc_key, extract_user_key, user_key_prefix, GcStats, Key,
-    MvccEntry, MvccStore, ReadResult, StorageError, Value, MAX_KEY_SIZE, MAX_VALUE_SIZE,
+    decode_mvcc_key, encode_mvcc_key, extract_user_key, user_key_prefix, GcStats, Key, MvccEntry,
+    MvccStore, ReadResult, StorageError, Value, MAX_KEY_SIZE, MAX_VALUE_SIZE,
 };
 
 /// Durability mode for write operations.
@@ -46,7 +46,10 @@ impl RocksMvccStore {
     }
 
     /// Opens or creates a RocksDB database with specified durability mode.
-    pub fn open_with_durability(path: &Path, durability: DurabilityMode) -> Result<Self, StorageError> {
+    pub fn open_with_durability(
+        path: &Path,
+        durability: DurabilityMode,
+    ) -> Result<Self, StorageError> {
         let mut opts = Options::default();
         opts.create_if_missing(true);
 
@@ -72,11 +75,19 @@ impl RocksMvccStore {
         let mut sync_write_opts = WriteOptions::default();
         sync_write_opts.set_sync(true);
 
-        Ok(Self { db, write_opts, sync_write_opts })
+        Ok(Self {
+            db,
+            write_opts,
+            sync_write_opts,
+        })
     }
 
     /// Opens a database with custom RocksDB options.
-    pub fn open_with_options(path: &Path, opts: Options, durability: DurabilityMode) -> Result<Self, StorageError> {
+    pub fn open_with_options(
+        path: &Path,
+        opts: Options,
+        durability: DurabilityMode,
+    ) -> Result<Self, StorageError> {
         let db = DBWithThreadMode::open(&opts, path)?;
 
         let mut write_opts = WriteOptions::default();
@@ -85,7 +96,11 @@ impl RocksMvccStore {
         let mut sync_write_opts = WriteOptions::default();
         sync_write_opts.set_sync(true);
 
-        Ok(Self { db, write_opts, sync_write_opts })
+        Ok(Self {
+            db,
+            write_opts,
+            sync_write_opts,
+        })
     }
 
     /// Forces a sync/flush to disk.
@@ -104,7 +119,8 @@ impl RocksMvccStore {
         self.validate_value(&value)?;
 
         let encoded_key = encode_mvcc_key(&key, &ts);
-        self.db.put_opt(&encoded_key, value.as_bytes(), &self.sync_write_opts)?;
+        self.db
+            .put_opt(&encoded_key, value.as_bytes(), &self.sync_write_opts)?;
 
         Ok(())
     }
@@ -244,7 +260,8 @@ impl MvccStore for RocksMvccStore {
         self.validate_value(&value)?;
 
         let encoded_key = encode_mvcc_key(&key, &ts);
-        self.db.put_opt(&encoded_key, value.as_bytes(), &self.write_opts)?;
+        self.db
+            .put_opt(&encoded_key, value.as_bytes(), &self.write_opts)?;
 
         Ok(())
     }
@@ -294,7 +311,10 @@ impl MvccStore for RocksMvccStore {
 
         // Start from the first possible version of start key
         let start_encoded = user_key_prefix(start);
-        let iter = self.db.iterator(IteratorMode::From(&start_encoded, rocksdb::Direction::Forward));
+        let iter = self.db.iterator(IteratorMode::From(
+            &start_encoded,
+            rocksdb::Direction::Forward,
+        ));
 
         for item in iter {
             if results.len() >= limit {
@@ -483,9 +503,15 @@ mod tests {
         let key = Key::from("key");
 
         // Write three versions at different times
-        store.write(key.clone(), Value::from("v1"), Timestamp::new(100, 110)).unwrap();
-        store.write(key.clone(), Value::from("v2"), Timestamp::new(200, 210)).unwrap();
-        store.write(key.clone(), Value::from("v3"), Timestamp::new(300, 310)).unwrap();
+        store
+            .write(key.clone(), Value::from("v1"), Timestamp::new(100, 110))
+            .unwrap();
+        store
+            .write(key.clone(), Value::from("v2"), Timestamp::new(200, 210))
+            .unwrap();
+        store
+            .write(key.clone(), Value::from("v3"), Timestamp::new(300, 310))
+            .unwrap();
 
         // Read at different times - should see appropriate versions
         let read_150 = store.read(&key, &Timestamp::new(150, 160)).unwrap();
@@ -503,7 +529,9 @@ mod tests {
         let (store, _dir) = create_test_store();
 
         let key = Key::from("key");
-        store.write(key.clone(), Value::from("value"), Timestamp::new(100, 110)).unwrap();
+        store
+            .write(key.clone(), Value::from("value"), Timestamp::new(100, 110))
+            .unwrap();
         store.delete(key.clone(), Timestamp::new(200, 210)).unwrap();
 
         // Read before delete sees value
@@ -559,7 +587,9 @@ mod tests {
         let read_ts = Timestamp::new(200, 210);
 
         // Scan [bbb, ddd) - should get bbb and ccc
-        let results = store.scan(&Key::from("bbb"), &Key::from("ddd"), &read_ts, 100).unwrap();
+        let results = store
+            .scan(&Key::from("bbb"), &Key::from("ddd"), &read_ts, 100)
+            .unwrap();
 
         assert_eq!(results.len(), 2);
         assert_eq!(results[0].0.as_bytes(), b"bbb");
@@ -577,7 +607,9 @@ mod tests {
         }
 
         let read_ts = Timestamp::new(200, 210);
-        let results = store.scan(&Key::from("key00"), &Key::from("key99"), &read_ts, 3).unwrap();
+        let results = store
+            .scan(&Key::from("key00"), &Key::from("key99"), &read_ts, 3)
+            .unwrap();
 
         assert_eq!(results.len(), 3);
     }
@@ -589,9 +621,15 @@ mod tests {
         let key = Key::from("key");
 
         // Write three versions
-        store.write(key.clone(), Value::from("v1"), Timestamp::new(100, 110)).unwrap();
-        store.write(key.clone(), Value::from("v2"), Timestamp::new(200, 210)).unwrap();
-        store.write(key.clone(), Value::from("v3"), Timestamp::new(300, 310)).unwrap();
+        store
+            .write(key.clone(), Value::from("v1"), Timestamp::new(100, 110))
+            .unwrap();
+        store
+            .write(key.clone(), Value::from("v2"), Timestamp::new(200, 210))
+            .unwrap();
+        store
+            .write(key.clone(), Value::from("v3"), Timestamp::new(300, 310))
+            .unwrap();
 
         // GC with safe_time that would delete all versions
         let safe_time = Timestamp::new(500, 510);
@@ -615,15 +653,19 @@ mod tests {
         // Write multiple versions of multiple keys
         for i in 0..5 {
             let key = Key::from(format!("key{}", i));
-            store.write(key.clone(), Value::from("v1"), Timestamp::new(100, 110)).unwrap();
-            store.write(key.clone(), Value::from("v2"), Timestamp::new(200, 210)).unwrap();
+            store
+                .write(key.clone(), Value::from("v1"), Timestamp::new(100, 110))
+                .unwrap();
+            store
+                .write(key.clone(), Value::from("v2"), Timestamp::new(200, 210))
+                .unwrap();
         }
 
         let safe_time = Timestamp::new(300, 310);
         let stats = store.gc(&safe_time).unwrap();
 
         assert_eq!(stats.versions_scanned, 10); // 5 keys * 2 versions
-        assert_eq!(stats.versions_deleted, 5);  // 5 old versions (one per key)
+        assert_eq!(stats.versions_deleted, 5); // 5 old versions (one per key)
     }
 
     #[test]
@@ -655,8 +697,12 @@ mod tests {
         let (store, _dir) = create_test_store();
 
         let ts = Timestamp::new(100, 110);
-        store.write(Key::from("key1"), Value::from("value1"), ts).unwrap();
-        store.write(Key::from("key2"), Value::from("value2"), ts).unwrap();
+        store
+            .write(Key::from("key1"), Value::from("value1"), ts)
+            .unwrap();
+        store
+            .write(Key::from("key2"), Value::from("value2"), ts)
+            .unwrap();
 
         let read_ts = Timestamp::new(200, 210);
         let keys = vec![Key::from("key1"), Key::from("key2"), Key::from("key3")];
