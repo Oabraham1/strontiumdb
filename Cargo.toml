@@ -1,0 +1,25 @@
+[package]
+name = "strontiumdb"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "A globally-distributed SQL database with adaptive sub-microsecond clock synchronization for true external consistency"
+repository = "https://github.com/strontiumdb/strontiumdb"
+readme = "README.md"
+keywords = ["database", "distributed", "truetime", "spanner"]
+categories = ["database-implementations"]
+
+[dependencies]
+thiserror = "2"
+libc = "0.2"
+nix = { version = "0.29", features = ["ioctl", "time", "fs"] }
+tokio = { version = "1", features = ["time", "sync", "rt", "process"] }
+
+[dev-dependencies]
+criterion = { version = "0.5", features = ["html_reports"] }
+proptest = "1"
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+
+[[bench]]
+name = "time_service"
+harness = false
