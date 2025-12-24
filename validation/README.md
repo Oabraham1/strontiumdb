@@ -47,9 +47,18 @@ chmod +x *.sh
 
 | Cloud | Source | Uncertainty | Improvement vs 500ms |
 |-------|--------|-------------|---------------------|
-| AWS EC2 (PHC enabled) | `Ntp` (via PHC) | ~5 μs | 50,000x |
-| Azure VM | `Ntp` (via PHC) | ~2.3 μs | 217,000x |
+| AWS EC2 (PHC enabled) | `Ntp` (via PHC) | ~5 μs | 100,000x |
+| Azure VM | `Ntp` (via PHC) | ~2-20 μs (region-dependent) | 25,000-250,000x |
 | GCP | `Ntp` | ~211 μs | 2,400x |
+
+### Azure Multi-Region Results (2025-12-24)
+
+| Region | Uncertainty (p99) |
+|--------|------------------|
+| West US 2 | 2.3 μs |
+| Canada Central | 4.0 μs |
+| Norway East | 12.0 μs |
+| Sweden Central | 20.2 μs |
 
 ## Manual Validation
 
@@ -73,6 +82,9 @@ cargo build --release --bin validate_timeservice
 
 ### Azure
 - [x] Standard_D2s_v3 (westus2) - 2.3 μs
+- [x] Standard_D2s_v3 (canadacentral) - 4.0 μs
+- [x] Standard_D2s_v3 (norwayeast) - 12.0 μs
+- [x] Standard_D2s_v3 (swedencentral) - 20.2 μs
 
 ### GCP
 - [x] n2-standard-4 (us-central1-a) - 211 μs
