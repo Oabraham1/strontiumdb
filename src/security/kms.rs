@@ -3,8 +3,6 @@
 
 //! Key Management Service trait and types.
 
-use std::time::SystemTime;
-
 use async_trait::async_trait;
 use zeroize::{Zeroize, ZeroizeOnDrop};
 
@@ -25,26 +23,18 @@ pub const AES_GCM_TAG_SIZE: usize = 16;
 /// They are wrapped (encrypted) by Key Encryption Keys (KEKs)
 /// when stored.
 #[derive(Clone, Zeroize, ZeroizeOnDrop)]
-#[allow(unused_assignments)]
 pub struct DataEncryptionKey {
     /// The raw 256-bit key material.
     key: [u8; AES_256_KEY_SIZE],
     /// Unique identifier for this DEK.
     #[zeroize(skip)]
     id: String,
-    /// When this key was created.
-    #[zeroize(skip)]
-    created_at: SystemTime,
 }
 
 impl DataEncryptionKey {
     /// Creates a new DEK with the given key material and ID.
     pub fn new(key: [u8; AES_256_KEY_SIZE], id: String) -> Self {
-        Self {
-            key,
-            id,
-            created_at: SystemTime::now(),
-        }
+        Self { key, id }
     }
 
     /// Returns the key material.
@@ -63,19 +53,12 @@ impl DataEncryptionKey {
     pub fn id(&self) -> &str {
         &self.id
     }
-
-    /// Returns when this key was created.
-    #[inline]
-    pub fn created_at(&self) -> SystemTime {
-        self.created_at
-    }
 }
 
 impl std::fmt::Debug for DataEncryptionKey {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("DataEncryptionKey")
             .field("id", &self.id)
-            .field("created_at", &self.created_at)
             .field("key", &"[REDACTED]")
             .finish()
     }

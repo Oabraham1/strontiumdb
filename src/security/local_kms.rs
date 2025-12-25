@@ -22,7 +22,6 @@ use super::kms::{
 
 /// A master key (KEK) stored in memory.
 #[derive(Zeroize, ZeroizeOnDrop)]
-#[allow(unused_assignments)]
 struct MasterKey {
     key: [u8; AES_256_KEY_SIZE],
     #[zeroize(skip)]
