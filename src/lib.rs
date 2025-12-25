@@ -8,10 +8,16 @@
 
 pub mod storage;
 pub mod time;
+pub mod txn;
 
 pub use storage::{
     GcStats, Key, MvccEntry, MvccStore, ReadResult, RocksMvccStore, StorageError, Value,
 };
 pub use time::{
-    create_time_service, ClockSource, TimeError, TimeService, TimeServiceConfig, Timestamp,
+    create_time_service, ClockSource, HlcTimeService, TimeError, TimeService, TimeServiceConfig,
+    Timestamp,
+};
+pub use txn::{
+    IsolationLevel, Lock, LockMode, LockTable, SingleNodeTxnManager, Transaction,
+    TransactionManager, TxnError, TxnId, TxnState, WoundWaitLockTable,
 };

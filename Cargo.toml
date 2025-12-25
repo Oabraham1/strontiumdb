@@ -15,6 +15,7 @@ libc = "0.2"
 nix = { version = "0.29", features = ["ioctl", "time", "fs"] }
 tokio = { version = "1", features = ["time", "sync", "rt", "process"] }
 rocksdb = "0.22"
+parking_lot = "0.12"
 
 [dev-dependencies]
 criterion = { version = "0.5", features = ["html_reports"] }
@@ -29,4 +30,8 @@ harness = false
 
 [[bench]]
 name = "storage"
+harness = false
+
+[[bench]]
+name = "transactions"
 harness = false
