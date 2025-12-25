@@ -24,7 +24,6 @@ use super::kms::{
 #[derive(Zeroize, ZeroizeOnDrop)]
 struct MasterKey {
     key: [u8; AES_256_KEY_SIZE],
-    #[zeroize(skip)]
     id: String,
 }
 

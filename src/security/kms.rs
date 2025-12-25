@@ -27,7 +27,6 @@ pub struct DataEncryptionKey {
     /// The raw 256-bit key material.
     key: [u8; AES_256_KEY_SIZE],
     /// Unique identifier for this DEK.
-    #[zeroize(skip)]
     id: String,
 }
 
