@@ -38,11 +38,13 @@
 //! }
 //! ```
 
+mod encrypted;
 mod error;
 mod key;
 mod mvcc;
 mod rocks;
 
+pub use encrypted::EncryptedMvccStore;
 pub use error::StorageError;
 pub use key::{decode_mvcc_key, encode_mvcc_key, extract_user_key, user_key_prefix};
 pub use mvcc::{
