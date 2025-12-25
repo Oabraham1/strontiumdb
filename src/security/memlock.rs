@@ -52,11 +52,8 @@ unsafe fn mlock_impl(ptr: *const u8, len: usize) -> Result<(), MemlockError> {
     if result == 0 {
         Ok(())
     } else {
-        let errno = *libc::__error();
-        Err(MemlockError::LockFailed(format!(
-            "mlock failed with errno {}",
-            errno
-        )))
+        let err = std::io::Error::last_os_error();
+        Err(MemlockError::LockFailed(format!("mlock failed: {}", err)))
     }
 }
 
@@ -77,10 +74,10 @@ unsafe fn munlock_impl(ptr: *const u8, len: usize) -> Result<(), MemlockError> {
     if result == 0 {
         Ok(())
     } else {
-        let errno = *libc::__error();
+        let err = std::io::Error::last_os_error();
         Err(MemlockError::UnlockFailed(format!(
-            "munlock failed with errno {}",
-            errno
+            "munlock failed: {}",
+            err
         )))
     }
 }

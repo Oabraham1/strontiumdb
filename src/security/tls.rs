@@ -200,8 +200,8 @@ mod tests {
 
     fn init_crypto_provider() {
         INIT.call_once(|| {
-            // Install ring as the default crypto provider
-            let _ = rustls::crypto::ring::default_provider().install_default();
+            // Install aws-lc-rs as the default crypto provider (rustls default)
+            let _ = rustls::crypto::aws_lc_rs::default_provider().install_default();
         });
     }
 
