@@ -190,7 +190,9 @@ fn bench_lock_acquire(c: &mut Criterion) {
                 (TxnId(i), ts, key)
             },
             |(txn_id, ts, key)| {
-                lock_table.acquire(txn_id, &ts, &key, LockMode::Exclusive).unwrap();
+                lock_table
+                    .acquire(txn_id, &ts, &key, LockMode::Exclusive)
+                    .unwrap();
                 black_box(())
             },
             BatchSize::SmallInput,
