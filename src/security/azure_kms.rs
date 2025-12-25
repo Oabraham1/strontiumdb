@@ -42,7 +42,7 @@ impl AzureKms {
     /// Creates a new Azure Key Vault client.
     ///
     /// # Arguments
-    /// * `vault_url` - The URL of the Key Vault (e.g., "https://myvault.vault.azure.net")
+    /// * `vault_url` - The URL of the Key Vault (e.g., `https://myvault.vault.azure.net`)
     /// * `key_name` - The name of the key to use as KEK
     /// * `key_version` - Optional specific key version (uses latest if None)
     /// * `cache_size` - Number of DEKs to cache in memory

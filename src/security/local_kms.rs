@@ -22,6 +22,7 @@ use super::kms::{
 
 /// A master key (KEK) stored in memory.
 #[derive(Zeroize, ZeroizeOnDrop)]
+#[allow(unused_assignments)]
 struct MasterKey {
     key: [u8; AES_256_KEY_SIZE],
     #[zeroize(skip)]
@@ -238,7 +239,7 @@ impl KeyManagementService for LocalKms {
 
 /// Decodes a hex string to bytes.
 fn hex_decode(hex: &str) -> Result<Vec<u8>, SecurityError> {
-    if hex.len() % 2 != 0 {
+    if !hex.len().is_multiple_of(2) {
         return Err(SecurityError::Crypto("invalid hex length".into()));
     }
 

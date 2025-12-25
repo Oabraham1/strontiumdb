@@ -25,6 +25,7 @@ pub const AES_GCM_TAG_SIZE: usize = 16;
 /// They are wrapped (encrypted) by Key Encryption Keys (KEKs)
 /// when stored.
 #[derive(Clone, Zeroize, ZeroizeOnDrop)]
+#[allow(unused_assignments)]
 pub struct DataEncryptionKey {
     /// The raw 256-bit key material.
     key: [u8; AES_256_KEY_SIZE],
